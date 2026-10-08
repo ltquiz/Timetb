@@ -1,4 +1,4 @@
-const CACHE_NAME='9a-timetable-v3';
+const CACHE_NAME='9a-timetable-v4';
 const APP_ROOT=new URL('./',self.registration.scope);
 const APP_SHELL=[
  APP_ROOT.href,
@@ -9,8 +9,11 @@ const APP_SHELL=[
 ];
 
 self.addEventListener('install',event=>{
- event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)));
- self.skipWaiting();
+    event.waitUntil((async()=>{
+        const cache=await caches.open(CACHE_NAME);
+        await cache.addAll(APP_SHELL);
+        await self.skipWaiting();
+    })());
 });
 
 self.addEventListener('activate',event=>{
