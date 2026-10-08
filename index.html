@@ -26,27 +26,29 @@ header{flex:none;padding:0 18px 8px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 h1{font-size:clamp(30px,6dvh,44px);line-height:1;margin:0 0 5px;font-weight:800;letter-spacing:-1.5px}
 .mu{color:var(--mu)}
-.icon{flex:none;width:42px;height:42px;border:0;border-radius:50%;background:var(--seg);color:var(--tx);font-size:22px;display:grid;place-items:center}
+.icon{flex:none;width:42px;height:42px;border:0;border-radius:50%;background:var(--seg);color:var(--tx);display:grid;place-items:center;cursor:pointer;transition:transform .18s ease,background .18s ease}
+.icon:hover{transform:translateY(-1px)}
+.icon svg{width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .seg{position:fixed;z-index:5;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;width:min(452px,calc(100% - 28px));background:color-mix(in srgb,var(--seg) 88%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);border:1px solid rgba(128,128,128,.16);border-radius:28px;padding:5px;margin:0;box-shadow:0 8px 28px rgba(0,0,0,.2)}
 .seg button{border:0;background:rgba(128,128,128,.1);color:var(--mu);font:inherit;font-size:15px;font-weight:600;height:42px;min-width:0;border-radius:21px;position:relative}
 .seg button.on{background:var(--on);color:var(--tx);box-shadow:0 2px 7px rgba(0,0,0,.12)}
 .seg button.td::after{content:"";position:absolute;left:calc(50% - 2px);bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--ac)}
-#list{display:flex;flex:1;flex-direction:column;min-height:0;justify-content:space-evenly}
-.r{display:grid;grid-template-columns:minmax(76px,25%) minmax(0,1fr);align-items:center;gap:10px;flex:1 1 0;min-height:0;padding:clamp(2px,.7dvh,6px) 14px;border-radius:20px;font-variant-numeric:tabular-nums}
+#list{display:flex;flex:1;flex-direction:column;min-height:0;justify-content:space-evenly;gap:8px;padding:4px 0 8px}
+.r{display:grid;grid-template-columns:minmax(76px,25%) minmax(0,1fr);align-items:center;gap:10px;flex:1 1 0;min-height:0;padding:8px 12px;border-radius:18px;border:1px solid rgba(128,128,128,.12);background:rgba(128,128,128,.04);font-variant-numeric:tabular-nums;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 .t{font-size:clamp(11px,2.4dvh,14px);white-space:nowrap;color:var(--mu)}
-.s{font-size:clamp(15px,min(3.4dvh,5.5vw),22px);line-height:1.08;font-weight:650}
+.s{display:flex;flex-direction:column;justify-content:center;min-width:0;gap:4px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.18);font-size:clamp(15px,min(3.4dvh,5.5vw),22px);line-height:1.1;font-weight:650;word-break:break-word;overflow-wrap:anywhere}
 .s small{display:block;font-size:clamp(11px,2.2dvh,14px);line-height:1.05;font-weight:500;margin-top:1px;opacity:.8}
 .g .s{font-size:clamp(12px,2.5dvh,14px);font-weight:500;color:var(--mu)}
 .past{opacity:.35}
-.now{background:var(--ac);color:#fff}.now .t{color:rgba(255,255,255,.75)}
+.now{background:var(--ac);color:#fff;border-color:transparent}.now .t{color:rgba(255,255,255,.75)}.now .s{background:rgba(255,255,255,.14)}
 #end{flex:none;padding:0 18px}
 #install{border:0;border-radius:18px;background:var(--ac);color:#fff;font:inherit;font-size:14px;font-weight:650;padding:10px 16px;margin-top:12px}
 #install[hidden]{display:none}
 .settings{padding:8px 18px}
 .settings h2{font-size:22px;margin:10px 0 6px}
 .settings p{color:var(--mu);margin:0 0 20px}
-.classes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.classes button{min-height:58px;border:1px solid rgba(128,128,128,.2);border-radius:18px;background:var(--seg);color:var(--tx);font:inherit;font-weight:650}
+.classes{display:flex;flex-direction:column;gap:10px}
+.classes button{display:flex;align-items:center;justify-content:center;min-height:58px;padding:0 18px;border:1px solid rgba(128,128,128,.2);border-radius:18px;background:var(--seg);color:var(--tx);font:inherit;font-weight:650;text-align:center;white-space:normal;line-height:1.2}
 .classes button.on{background:var(--ac);color:#fff}
 [hidden]{display:none!important}
 </style>
@@ -55,7 +57,7 @@ h1{font-size:clamp(30px,6dvh,44px);line-height:1;margin:0 0 5px;font-weight:800;
 <main>
 <section id="timetablePage">
 <header>
-<div class="top"><h1 id="h"></h1><button class="icon" id="settingsButton" type="button" aria-label="Settings" title="Settings">⚙</button></div>
+<div class="top"><h1 id="h"></h1><button class="icon" id="settingsButton" type="button" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 2.7v2.1M12 19.2v2.1M4.93 4.93l1.5 1.5M17.57 17.57l1.5 1.5M2.7 12h2.1M19.2 12h2.1M4.93 19.07l1.5-1.5M17.57 6.43l1.5-1.5"></path></svg></button></div>
 <div class="mu" id="d"></div><button id="install" type="button" hidden>Install app</button>
 </header>
 <div id="list" aria-live="polite"></div>
@@ -63,7 +65,7 @@ h1{font-size:clamp(30px,6dvh,44px);line-height:1;margin:0 0 5px;font-weight:800;
 <div class="seg" id="days" aria-label="Choose a weekday"></div>
 </section>
 <section id="settingsPage" class="settings" hidden>
-<div class="top"><h1>Settings</h1><button class="icon" id="backButton" type="button" aria-label="Back to timetable">←</button></div>
+<div class="top"><h1>Settings</h1><button class="icon" id="backButton" type="button" aria-label="Back to timetable"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button></div>
 <h2>Choose your class</h2>
 <p>Your choice is saved on this device.</p>
 <div class="classes" id="classChoices"></div>
