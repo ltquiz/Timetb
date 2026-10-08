@@ -29,11 +29,13 @@ h1{font-size:44px;line-height:1;margin:0 0 6px;font-weight:800;letter-spacing:-1
 .past{opacity:.35}
 .now{background:var(--ac);color:#fff}.now .t{color:rgba(255,255,255,.75)}
 #end{padding:22px 18px 0}
+#install{border:0;border-radius:18px;background:var(--ac);color:#fff;font:inherit;font-size:14px;font-weight:650;padding:10px 16px;margin-top:12px}
+#install[hidden]{display:none}
 </style>
 </head>
 <body>
 <main>
-<header><h1 id="h"></h1><div class="mu" id="d"></div></header>
+<header><h1 id="h"></h1><div class="mu" id="d"></div><button id="install" type="button" hidden>Install app</button></header>
 <div class="seg" id="days"></div>
 <div id="list"></div>
 <div class="mu" id="end"></div>
@@ -65,7 +67,34 @@ function render(){
  $('end').textContent=done?`Done for today. ${F[n]} starts with ${S[D[n][0]]}.`:'';
 }
 render();setInterval(render,30000);
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+let installPrompt;
+const installButton=$('install');
+window.addEventListener('beforeinstallprompt',event=>{
+ event.preventDefault();
+ installPrompt=event;
+ installButton.hidden=false;
+});
+installButton.addEventListener('click',async()=>{
+ if(!installPrompt)return;
+ installButton.disabled=true;
+ try{
+  await installPrompt.prompt();
+  await installPrompt.userChoice;
+ }finally{
+  installPrompt=null;
+  installButton.hidden=true;
+  installButton.disabled=false;
+ }
+});
+window.addEventListener('appinstalled',()=>{
+ installPrompt=null;
+ installButton.hidden=true;
+});
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js').catch(error=>console.warn('Service worker registration failed:',error));
+ });
+}
 </script>
 </body>
 </html>

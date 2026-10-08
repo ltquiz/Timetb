@@ -1,12 +1,55 @@
-const V='9a-v2';
-const FA='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(['./','index.html','manifest.json'])));self.skipWaiting()});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))));self.clients.claim()});
-self.addEventListener('fetch',e=>{
- if(e.request.method!=='GET')return;
- e.respondWith(caches.open(V).then(async c=>{
-  const hit=await c.match(e.request,{ignoreSearch:true});
-  const net=fetch(e.request).then(r=>{if(r.ok)c.put(e.request,r.clone());return r}).catch(()=>hit);
-  return hit||net;
- }));
+const CACHE_NAME='9a-timetable-v3';
+const APP_ROOT=new URL('./',self.registration.scope);
+const APP_SHELL=[
+ APP_ROOT.href,
+ new URL('index.html',APP_ROOT).href,
+ new URL('manifest.json',APP_ROOT).href,
+ new URL('icons/icon-192.png',APP_ROOT).href,
+ new URL('icons/icon-512.png',APP_ROOT).href
+];
+
+self.addEventListener('install',event=>{
+ event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)));
+ self.skipWaiting();
+});
+
+self.addEventListener('activate',event=>{
+ event.waitUntil((async()=>{
+  const keys=await caches.keys();
+  await Promise.all(keys.filter(key=>key.startsWith('9a-timetable-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));
+  await self.clients.claim();
+ })());
+});
+
+self.addEventListener('fetch',event=>{
+ const request=event.request;
+ const requestUrl=new URL(request.url);
+ if(request.method!=='GET'||requestUrl.origin!==self.location.origin)return;
+
+ event.respondWith((async()=>{
+  const cache=await caches.open(CACHE_NAME);
+  if(request.mode==='navigate'){
+   try{
+    const response=await fetch(request);
+    if(response.ok)await cache.put(request,response.clone());
+    return response;
+   }catch{
+    const fallback=await cache.match(request,{ignoreSearch:true})||await cache.match(APP_ROOT.href);
+    return fallback||new Response('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline</title><body><h1>You are offline</h1><p>Reconnect to load the timetable.</p></body></html>',{
+     status:503,
+     headers:{'Content-Type':'text/html; charset=utf-8'}
+    });
+   }
+  }
+
+  const cached=await cache.match(request,{ignoreSearch:true});
+  if(cached)return cached;
+  try{
+   const response=await fetch(request);
+   if(response.ok)await cache.put(request,response.clone());
+   return response;
+  }catch{
+   return new Response('',{status:504,statusText:'Gateway Timeout'});
+  }
+ })());
 });
