@@ -1,9 +1,10 @@
-const CACHE_NAME='9a-timetable-v5';
+const CACHE_NAME='9a-timetable-v6';
 const APP_ROOT=new URL('./',self.registration.scope);
 const APP_SHELL=[
  APP_ROOT.href,
  new URL('index.html',APP_ROOT).href,
  new URL('manifest.json',APP_ROOT).href,
+ new URL('manifest-dark.json',APP_ROOT).href,
  new URL('icons/icon-192.png',APP_ROOT).href,
  new URL('icons/icon-512.png',APP_ROOT).href
 ];

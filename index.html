@@ -8,6 +8,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>9A Timetable</title>
 <link rel="manifest" href="manifest.json">
+<script>
+const manifestLink=document.querySelector('link[rel="manifest"]');
+const colorScheme=matchMedia('(prefers-color-scheme: dark)');
+function updateManifest(){manifestLink.href=colorScheme.matches?'manifest-dark.json':'manifest.json'}
+updateManifest();
+colorScheme.addEventListener('change',updateManifest);
+</script>
 <style>
 :root{--bg:#f7f7f8;--tx:#1c1c1e;--mu:#8a8a90;--ac:#2f5bff;--seg:#e8e8ec;--on:#fff}
 @media(prefers-color-scheme:dark){:root{--bg:#000;--tx:#f2f2f7;--mu:#7c7c84;--ac:#5b7cff;--seg:#1c1c1e;--on:#3a3a3c}}
