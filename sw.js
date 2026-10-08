@@ -1,10 +1,11 @@
-const CACHE_NAME='9a-timetable-v6';
+const CACHE_NAME='9a-timetable-v7';
 const APP_ROOT=new URL('./',self.registration.scope);
 const APP_SHELL=[
  APP_ROOT.href,
  new URL('index.html',APP_ROOT).href,
  new URL('manifest.json',APP_ROOT).href,
  new URL('manifest-dark.json',APP_ROOT).href,
+ new URL('timetable.json',APP_ROOT).href,
  new URL('icons/icon-192.png',APP_ROOT).href,
  new URL('icons/icon-512.png',APP_ROOT).href
 ];
@@ -43,6 +44,17 @@ self.addEventListener('fetch',event=>{
      status:503,
      headers:{'Content-Type':'text/html; charset=utf-8'}
     });
+   }
+  }
+
+  if(requestUrl.href===new URL('timetable.json',APP_ROOT).href){
+   try{
+    const response=await fetch(request);
+    if(response.ok)await cache.put(request,response.clone());
+    return response;
+   }catch{
+    const fallback=await cache.match(request,{ignoreSearch:true});
+    return fallback||new Response('',{status:504,statusText:'Gateway Timeout'});
    }
   }
 

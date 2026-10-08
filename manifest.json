@@ -1,6 +1,6 @@
 {
-	"name": "9A Timetable",
-	"short_name": "9A Timetable",
+	"name": "Grade 9 Timetable",
+	"short_name": "Grade 9",
 	"start_url": "./",
 	"scope": "./",
 	"display": "standalone",
