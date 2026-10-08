@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme:light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme:dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>9A Timetable</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#f7f7f8;--tx:#1c1c1e;--mu:#8a8a90;--ac:#2f5bff;--seg:#e8e8ec;--on:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--tx:#f2f2f7;--mu:#7c7c84;--ac:#5b7cff;--seg:#1c1c1e;--on:#3a3a3c}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:500 17px/1.3 system-ui,-apple-system,sans-serif;padding:max(28px,env(safe-area-inset-top)) 14px calc(32px + env(safe-area-inset-bottom))}
+main{max-width:480px;margin:auto}
+header{padding:0 18px 22px}
+h1{font-size:44px;line-height:1;margin:0 0 6px;font-weight:800;letter-spacing:-1.5px}
+.mu{color:var(--mu)}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--seg);border-radius:25px;padding:5px;margin-bottom:18px}
+.seg button{border:0;background:none;color:var(--mu);font:inherit;font-size:15px;font-weight:600;height:44px;border-radius:21px;position:relative}
+.seg button.on{background:var(--on);color:var(--tx)}
+.seg button.td::after{content:"";position:absolute;left:calc(50% - 2px);bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--ac)}
+.r{display:flex;align-items:center;gap:12px;padding:15px 18px;border-radius:25px;font-variant-numeric:tabular-nums}
+.t{flex:none;width:96px;font-size:14px;color:var(--mu)}
+.s{font-size:22px;font-weight:650;letter-spacing:-.3px}
+.s small{display:block;font-size:14px;font-weight:500;margin-top:2px;opacity:.8}
+.g{padding-top:4px;padding-bottom:4px}.g .s{font-size:14px;font-weight:500;color:var(--mu)}
+.past{opacity:.35}
+.now{background:var(--ac);color:#fff}.now .t{color:rgba(255,255,255,.75)}
+#end{padding:22px 18px 0}
+</style>
+</head>
+<body>
+<main>
+<header><h1 id="h"></h1><div class="mu" id="d"></div></header>
+<div class="seg" id="days"></div>
+<div id="list"></div>
+<div class="mu" id="end"></div>
+</main>
+<script>
+const S={MA:'Maths',GEO:'Geography',EC:'Economics',EN:'English',ICT:'ICT',ST:'Study',HPE:'HPE',FL:'Foreign Language',CH:'Chemistry',PH:'Physics',BIO:'Biology',AO:'Afaan Oromo',HI:'History',CS:'Civics',AM:'Amharic'};
+const D=['MA GEO EC EN ICT ST HPE FL','EN CH EC PH MA BIO AO FL','ST CH PH GEO EN HI MA FL','HI MA ICT CH CS GEO BIO FL','PH BIO HI AO EN AM MA CS'].map(x=>x.split(' '));
+const F=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+const T=[[2,0,2,45],[2,45,3,30],[3,30,4,15],[4,30,5,15],[5,15,6,0],[7,40,8,25],[8,25,9,10],[9,10,11,35]];
+const $=id=>document.getElementById(id),p=n=>String(n).padStart(2,'0'),g=(h,m)=>(h+6)*60+m;
+const tt=t=>`${t[0]}:${p(t[1])}–${t[2]}:${p(t[3])}`;
+const dur=m=>m>=60?`${Math.floor(m/60)}h ${p(m%60)}m`:`${m} min`;
+function items(d){const o=[];T.forEach((t,i)=>{
+ if(i==3)o.push({t:[4,15,4,30],b:'Break'});
+ if(i==5)o.push({t:[6,0,7,40],b:'Lunch'});
+ o.push({t,k:D[d][i]})});
+ o.forEach(x=>{x.s=g(x.t[0],x.t[1]);x.e=g(x.t[2],x.t[3])});return o}
+const wd=new Date().getDay()-1;let sel=wd>=0&&wd<5?wd:0;
+function render(){
+ const dt=new Date(),now=dt.getHours()*60+dt.getMinutes(),td=sel==wd,l=items(sel);
+ $('h').textContent=F[sel];
+ $('d').textContent=dt.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+ $('days').innerHTML=F.map((f,i)=>`<button class="${i==sel?'on ':''}${i==wd?'td':''}" onclick="sel=${i};render()">${f.slice(0,3)}</button>`).join('');
+ $('list').innerHTML=l.map(x=>{
+  const st=td?(now>=x.e?'past':now>=x.s?'now':''):'';
+  if(!x.k)return `<div class="r g ${st}"><span class=t>${tt(x.t)}</span><span class=s>${x.b}</span></div>`;
+  return `<div class="r ${st}"><span class=t>${tt(x.t)}</span><span class=s>${S[x.k]}${st=='now'?`<small>Ends in ${dur(x.e-now)}</small>`:''}</span></div>`}).join('');
+ const done=td&&now>=l[l.length-1].e,n=(sel+1)%5;
+ $('end').textContent=done?`Done for today. ${F[n]} starts with ${S[D[n][0]]}.`:'';
+}
+render();setInterval(render,30000);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
