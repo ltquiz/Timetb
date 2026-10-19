@@ -16,7 +16,7 @@
     "EC": "Economics",
     "EN": "English",
     "ICT": "ICT",
-    "ST": "Study",
+    "ST": "Area Study",
     "HPE": "HPE",
     "FL": "Foreign Language",
     "CH": "Chemistry",
@@ -29,11 +29,11 @@
   },
   "classes": {
     "A": {
-      "Monday": ["MA", "GEO", "EC", "EN", "ICT", "ST", "HPE", "FL"],
+      "Monday": ["CS", "GEO", "EC", "EN", "ICT", "MA", "HPE", "FL"],
       "Tuesday": ["EN", "CH", "EC", "PH", "MA", "BIO", "AO", "FL"],
-      "Wednesday": ["ST", "CH", "PH", "GEO", "EN", "HI", "MA", "FL"],
-      "Thursday": ["HI", "MA", "ICT", "CH", "CS", "GEO", "BIO", "FL"],
-      "Friday": ["PH", "BIO", "HI", "AO", "EN", "AM", "MA", "CS"]
+      "Wednesday": ["PH", "CS", "CH", "GEO", "EN", "HI", "MA", "FL"],
+      "Thursday": ["HI", "MA", "ICT", "CH", "ST", "GEO", "BIO", "FL"],
+      "Friday": ["PH", "AO", "HI", "BIO", "EN", "AM", "MA", "ST"]
     },
     "B": {
       "Monday": ["EC", "MA", "EN", "GEO", "PH", "AO", "ICT", "FL"],
